@@ -10,6 +10,7 @@ on:
       create_tag:
         description: 'Create a tag'
         required: true
+        default: true
         type: 'boolean'
 
 concurrency:
