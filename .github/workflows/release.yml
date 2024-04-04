@@ -53,5 +53,5 @@ jobs:
           body: |
             Release ${{ env.TAG_NAME }}
           draft: true
+          commit: ${{ github.sha }}
           artifacts: version.txt
-          
