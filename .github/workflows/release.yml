@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: gradle-release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract tag name
+        id: extract_tag
+        run: echo "TAG_NAME=$(echo $GITHUB_REF | sed 's/refs\/tags\/v//')" >> $GITHUB_ENV
+      
+      - name: Post tag name
+        run: echo ${{ env.TAG_NAME }}
+      
+      - name: Update version file
+        run: sed -i "s/version=.*/version=${{ env.TAG_NAME }}/g" version.txt
+      
+      - name: Show file
+        run: cat version.txt
+
+      # Upload artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Version file
+          path: version.txt
