@@ -16,6 +16,9 @@ concurrency:
   group: gradle-release-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -45,7 +48,7 @@ jobs:
           path: version.txt
 
       - name: Create tag
-        if: ${{ github.event.inputs.create_tag }}
+        if: ${{ github.event.inputs.create_tag == 'true' }}
         uses: ncipollo/release-action@v1
         with:
           tag: v${{ env.TAG_NAME }}
