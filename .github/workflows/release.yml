@@ -1,14 +1,16 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
     inputs:
       version:
         description: 'Version number for the release'
         required: true
+        type: 'string'
+      create_tag:
+        description: 'Create a tag'
+        required: true
+        type: 'boolean'
 
 concurrency:
   group: gradle-release-${{ github.ref }}
@@ -24,12 +26,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract tag name from push event
-        if: github.event_name == 'push'
-        run: echo "TAG_NAME=$(echo $GITHUB_REF | sed 's/refs\/tags\/v//')" >> $GITHUB_ENV
-
       - name: Extract tag name from workflow_dispatch
-        if: github.event_name == 'workflow_dispatch'
         run: echo "TAG_NAME=${{ github.event.inputs.version }}" >> $GITHUB_ENV
       
       - name: Post tag name
@@ -46,3 +43,15 @@ jobs:
         with:
           name: Version file
           path: version.txt
+
+      - name: Create tag
+        if: ${{ github.event.inputs.create_tag }}
+        uses: ncipollo/release-action@v1
+        with:
+          tag: v${{ env.TAG_NAME }}
+          name: v${{ env.TAG_NAME }}
+          body: |
+            Release ${{ env.TAG_NAME }}
+          draft: true
+          artifacts: version.txt
+          
