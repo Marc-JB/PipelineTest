@@ -21,7 +21,7 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  prepare:
     runs-on: ubuntu-latest
     timeout-minutes: 4
     steps:
@@ -47,6 +47,25 @@ jobs:
         with:
           name: Version file
           path: version.txt
+
+  release:
+    runs-on: ubuntu-latest
+    needs: prepare
+    timeout-minutes: 4
+    steps:
+
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download version.txt
+        uses: actions/download-artifact@v2
+        with:
+          name: Version file
+          path: .
+      
+      - name: Show file
+        run: cat version.txt
 
       - name: Create tag
         if: ${{ github.event.inputs.create_tag == 'true' }}
