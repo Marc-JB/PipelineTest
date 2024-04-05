@@ -85,7 +85,13 @@ jobs:
         run: ls -al
 
       - name: Zip archive
-        run: zip -r -v mix.zip ./out/mix/
+        run: |
+          cd ./out/mix/
+          zip -r -v ../../mix.zip ./
+          cd ../../
+      
+      - name: Show files
+        run: ls -al
       
       - name: Show file
         run: cat version.txt
