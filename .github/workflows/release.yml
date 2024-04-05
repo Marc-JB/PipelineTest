@@ -60,10 +60,6 @@ jobs:
     if: ${{ github.event.inputs.create_tag == 'true' }}
     steps:
 
-      # Checkout
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Download version.txt
         uses: actions/download-artifact@v4
         with:
